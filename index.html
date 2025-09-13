@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Engineering Scale Converter</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        width: 100%;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-top: 30px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #2c3e50;
+        font-weight: 600;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .input-field {
+        flex: 1;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: #3498db;
+        outline: none;
+      }
+
+      button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        width: 100%;
+        transition: background 0.3s;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background: #2980b9;
+      }
+
+      .result-container {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 30px;
+        text-align: center;
+        border-left: 5px solid #3498db;
+      }
+
+      .result-title {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
+
+      .result-value {
+        font-size: 2.5rem;
+        color: #2c3e50;
+        font-weight: 700;
+      }
+
+      .result-details {
+        margin-top: 15px;
+        color: #7f8c8d;
+        font-size: 1rem;
+      }
+
+      .formula {
+        background: #f1f8ff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 30px;
+        font-size: 14px;
+        color: #4a5568;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 30px;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 600px) {
+        .input-row {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .container {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Engineering Scale Converter</h1>
+        <p class="subtitle">
+          Convert feet and inches to centimeters based on your custom scale
+        </p>
+      </header>
+
+      <div class="input-group">
+        <label>Reference Scale (1 foot = ? cm)</label>
+        <input
+          type="number"
+          id="scaleInput"
+          step="0.1"
+          value="1.2"
+          placeholder="Enter scale value"
+        />
+      </div>
+
+      <div class="input-group">
+        <label>Input Measurement</label>
+        <div class="input-row">
+          <div class="input-field">
+            <label>Feet</label>
+            <input type="number" id="feetInput" value="0" min="0" />
+          </div>
+          <div class="input-field">
+            <label>Inches</label>
+            <input
+              type="number"
+              id="inchesInput"
+              value="5"
+              min="0"
+              step="0.1"
+            />
+          </div>
+        </div>
+      </div>
+
+      <button id="convertBtn">Convert to Centimeters</button>
+
+      <div class="result-container">
+        <div class="result-title">Converted Length</div>
+        <div class="result-value" id="resultValue">0.50 cm</div>
+        <div class="result-details" id="resultDetails">
+          Based on your scale: 1 ft = 1.2 cm
+        </div>
+      </div>
+
+      <div class="formula">
+        <strong>Conversion Formula:</strong><br />
+        Total inches = (feet × 12) + inches<br />
+        Centimeters = total inches × (scale value / 12)
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        Civil Engineering Drawing Tool | Created for accurate scale conversions
+      </p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const scaleInput = document.getElementById("scaleInput");
+        const feetInput = document.getElementById("feetInput");
+        const inchesInput = document.getElementById("inchesInput");
+        const convertBtn = document.getElementById("convertBtn");
+        const resultValue = document.getElementById("resultValue");
+        const resultDetails = document.getElementById("resultDetails");
+
+        // Perform conversion on page load
+        convertUnits();
+
+        // Add event listeners
+        convertBtn.addEventListener("click", convertUnits);
+        scaleInput.addEventListener("input", convertUnits);
+        feetInput.addEventListener("input", convertUnits);
+        inchesInput.addEventListener("input", convertUnits);
+
+        function convertUnits() {
+          // Get input values
+          const scaleValue = parseFloat(scaleInput.value) || 0;
+          const feet = parseFloat(feetInput.value) || 0;
+          const inches = parseFloat(inchesInput.value) || 0;
+
+          // Calculate total inches
+          const totalInches = feet * 12 + inches;
+
+          // Convert to centimeters based on scale
+          const centimeters = totalInches * (scaleValue / 12);
+
+          // Display result with 2 decimal places
+          resultValue.textContent = centimeters.toFixed(2) + " cm";
+
+          // Update result details
+          resultDetails.textContent = `Based on your scale: 1 ft = ${scaleValue} cm`;
+        }
+      });
+    </script>
+  </body>
+</html>
